@@ -1,0 +1,29 @@
+apiVersion: autopilot.libopenstorage.org/v1alpha1
+kind: AutopilotRule
+metadata:
+  namespace: autopilot
+  name: pool-expand
+spec:
+  enforcement: required
+  ##### conditions are the symptoms to evaluate. All conditions are AND'ed
+  conditions:
+    for: 60
+    expressions:
+    # pool available capacity less than 40%
+    - key: "px_pool_stats_total_bytes/(1024*1024*1024)"
+      operator: Lt
+      values:
+        - "97"
+  ##### action to perform when condition is true
+  actions:
+    - name: "openstorage.io.action.storagepool/expand"
+      params:
+        # resize pool by scalepercentage of current size
+        scalepercentage: "100"
+        # when scaling, resize existing disks in the pool
+        scaletype: "resize-disk"
+        maxsize: "160Gi"
+  selector:
+    matchLabels:
+      autopilot: "true"
+  actionsCoolDownPeriod: 60
