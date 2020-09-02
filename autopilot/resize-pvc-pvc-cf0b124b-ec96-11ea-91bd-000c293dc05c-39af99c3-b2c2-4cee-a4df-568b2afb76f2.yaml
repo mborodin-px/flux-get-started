@@ -1,0 +1,44 @@
+apiVersion: autopilot.libopenstorage.org/v1alpha1
+kind: ActionApproval
+metadata:
+  creationTimestamp: null
+  finalizers:
+  - autopilot.libopenstorage.org/delete
+  labels:
+    object: pvc-cf0b124b-ec96-11ea-91bd-000c293dc05c
+    rule: resize-pvc
+  name: resize-pvc-pvc-cf0b124b-ec96-11ea-91bd-000c293dc05c
+  namespace: p1
+spec:
+  actions:
+  - name: resize
+    params:
+      maxsize: 200Gi
+      scalepercentage: "50"
+  approvalState: approved
+status:
+  Rule:
+    Name: resize-pvc
+    Namespace: ""
+  actionPreviews:
+  - action:
+      name: resize
+      params:
+        maxsize: 200Gi
+        scalepercentage: "50"
+    expectedResult:
+      Message: PVC will resize from 30Gi to 45Gi
+    involvedObjects:
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      name: postgres-data1
+      namespace: p1
+      ownerReferences:
+      - apiVersion: apps/v1
+        blockOwnerDeletion: true
+        controller: true
+        kind: ReplicaSet
+        name: postgres-5fd64744cd
+        uid: cf104815-ec96-11ea-91bd-000c293dc05c
+      uid: pvc-cf0b124b-ec96-11ea-91bd-000c293dc05c
+  lastProcessTimestamp: "2020-09-02T19:52:49Z"
